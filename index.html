@@ -1,0 +1,651 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Helena Oliveira — Requisitos que viram sistema</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #14171B;
+    --bg-alt: #1B1F25;
+    --card: #1B2027;
+    --ink: #F3F4F1;
+    --muted: #9BA3AC;
+    --accent: #5FE38E;
+    --accent-dim: rgba(95,227,142,0.12);
+    --accent-2: #E3B23C;
+    --line: #2B3138;
+  }
+  *{box-sizing:border-box;}
+  html{scroll-behavior:smooth;}
+  body{
+    margin:0; background:var(--bg); color:var(--ink);
+    font-family:'IBM Plex Sans', sans-serif; line-height:1.65;
+    -webkit-font-smoothing:antialiased; overflow-x:hidden;
+  }
+  h1,h2,h3{ font-family:'Space Grotesk', sans-serif; font-weight:700; margin:0; letter-spacing:-0.01em; }
+  .tag{ font-family:'IBM Plex Mono', monospace; font-size:0.75rem; color:var(--accent); letter-spacing:0.03em; }
+  a{color:inherit;}
+  .wrap{max-width:1080px; margin:0 auto; padding:0 28px;}
+  ::selection{background:var(--accent); color:#0C1210;}
+  a:focus-visible, button:focus-visible{ outline:2px solid var(--accent); outline-offset:3px; }
+
+  @media (prefers-reduced-motion: reduce){
+    *{animation:none !important; transition:none !important; scroll-behavior:auto !important;}
+  }
+
+  /* ---------- scroll reveal ---------- */
+  [data-reveal]{
+    opacity:0; transform:translateY(26px) rotate(-0.4deg);
+    transition:opacity .7s cubic-bezier(.2,.7,.2,1), transform .7s cubic-bezier(.2,.7,.2,1);
+  }
+  [data-reveal].in-view{ opacity:1; transform:translateY(0) rotate(0deg); }
+  [data-reveal="scale"]{ transform:scale(.94); }
+  [data-reveal="scale"].in-view{ transform:scale(1); }
+
+  /* ---------- header ---------- */
+  header{
+    position:sticky; top:0; z-index:60;
+    background:rgba(20,23,27,0.82); backdrop-filter:blur(10px);
+    border-bottom:1px solid var(--line);
+  }
+  .nav{ display:flex; align-items:center; justify-content:space-between; padding:16px 28px; max-width:1080px; margin:0 auto; }
+  .brand{ font-family:'Space Grotesk', sans-serif; font-weight:700; font-size:1.1rem; display:flex; align-items:center; gap:10px; }
+  .brand-mark{
+    width:34px; height:34px; border-radius:8px; background:var(--accent-dim);
+    border:1px solid var(--accent); color:var(--accent); display:flex; align-items:center; justify-content:center;
+    font-size:0.8rem; font-family:'IBM Plex Mono', monospace; font-weight:500;
+  }
+  nav ul{ list-style:none; display:flex; gap:8px; margin:0; padding:0; }
+  nav ul li a{
+    text-decoration:none; font-size:0.9rem; color:var(--muted); padding:8px 14px;
+    border-radius:6px; position:relative; display:inline-block; transition:color .25s ease;
+  }
+  nav ul li a::after{
+    content:""; position:absolute; left:14px; right:14px; bottom:4px; height:1px;
+    background:var(--accent); transform:scaleX(0); transform-origin:center;
+    transition:transform .3s cubic-bezier(.3,.8,.3,1);
+  }
+  nav ul li a:hover{ color:var(--ink); }
+  nav ul li a:hover::after{ transform:scaleX(1); }
+
+  .nav-toggle{
+    display:none; background:none; border:1px solid var(--line); border-radius:8px;
+    cursor:pointer; padding:8px 10px; width:42px; height:38px;
+  }
+  .nav-toggle span{ display:block; width:20px; height:2px; background:var(--ink); margin:4px auto; transition:transform .3s ease, opacity .3s ease; }
+
+  @media (max-width: 760px){
+    nav ul{ display:none; }
+    .nav-toggle{ display:block; }
+  }
+
+  /* ---------- mobile menu modal ---------- */
+  .menu-modal{
+    position:fixed; inset:0; z-index:100; display:flex; justify-content:flex-end;
+    visibility:hidden; pointer-events:none;
+  }
+  .menu-modal.open{ visibility:visible; pointer-events:auto; }
+  .menu-backdrop{
+    position:absolute; inset:0; background:rgba(10,12,14,0.6); backdrop-filter:blur(3px);
+    opacity:0; transition:opacity .35s ease;
+  }
+  .menu-modal.open .menu-backdrop{ opacity:1; }
+  .menu-panel{
+    position:relative; width:min(78vw, 320px); height:100%; background:var(--bg-alt);
+    border-left:1px solid var(--line); padding:26px 26px; display:flex; flex-direction:column; gap:6px;
+    transform:translateX(100%); transition:transform .4s cubic-bezier(.2,.8,.2,1);
+  }
+  .menu-modal.open .menu-panel{ transform:translateX(0); }
+  .menu-close{
+    align-self:flex-end; background:none; border:1px solid var(--line); border-radius:8px;
+    color:var(--ink); width:36px; height:36px; cursor:pointer; margin-bottom:20px; font-size:1.1rem;
+  }
+  .menu-panel a{
+    text-decoration:none; color:var(--ink); font-family:'Space Grotesk', sans-serif; font-size:1.3rem;
+    padding:12px 4px; border-bottom:1px solid var(--line);
+    opacity:0; transform:translateX(18px); transition:opacity .4s ease, transform .4s ease;
+  }
+  .menu-modal.open .menu-panel a{ opacity:1; transform:translateX(0); }
+  .menu-panel a:nth-child(2){ transition-delay:.05s; }
+  .menu-panel a:nth-child(3){ transition-delay:.1s; }
+  .menu-panel a:nth-child(4){ transition-delay:.15s; }
+  .menu-panel a:nth-child(5){ transition-delay:.2s; }
+  .menu-panel a:hover{ color:var(--accent); }
+
+  /* ---------- hero ---------- */
+  .hero{ padding-top:70px; padding-bottom:60px; display:grid; grid-template-columns:1.05fr 0.95fr; gap:50px; align-items:center; }
+  .eyebrow-plain{ color:var(--accent); font-size:0.95rem; margin-bottom:14px; font-family:'IBM Plex Mono', monospace; }
+  .hero h1{ font-size:clamp(2.1rem, 4vw, 3rem); line-height:1.14; }
+  .hero h1 .accent-word{ color:var(--accent); }
+  .cursor-blink{ display:inline-block; width:3px; height:0.9em; background:var(--accent); margin-left:4px; vertical-align:-0.08em; animation:blink 1s step-end infinite; }
+  @keyframes blink{ 50%{ opacity:0; } }
+  .hero p.lead{ margin-top:20px; font-size:1.06rem; color:var(--muted); max-width:48ch; }
+  .hero-cta{ display:flex; gap:14px; margin-top:32px; flex-wrap:wrap; }
+
+  .btn{
+    display:inline-flex; align-items:center; gap:9px; padding:12px 22px; border-radius:8px;
+    font-size:0.95rem; text-decoration:none; font-weight:500; border:1px solid transparent;
+    cursor:pointer; position:relative; overflow:hidden; transition:transform .25s ease, color .25s ease, border-color .25s ease;
+  }
+  .btn span.ic{ transition:transform .3s cubic-bezier(.3,.8,.3,1); }
+  .btn:hover span.ic{ transform:translateX(4px); }
+  .btn-primary{ background:var(--accent); color:#0C1210; }
+  .btn-primary:hover{ transform:translateY(-2px); box-shadow:0 10px 24px -8px rgba(95,227,142,0.5); }
+  .btn-ghost{ border-color:var(--line); color:var(--ink); }
+  .btn-ghost:hover{ border-color:var(--accent); color:var(--accent); transform:translateY(-2px); }
+
+  /* hero visual: avatar + shards */
+  .hero-visual{ position:relative; display:flex; align-items:center; justify-content:center; min-height:360px; }
+  .shard{
+    position:absolute; background:linear-gradient(135deg, var(--accent-dim), transparent);
+    border:1px solid rgba(95,227,142,0.35); animation:float 6s ease-in-out infinite;
+  }
+  .shard1{ width:70px; height:70px; top:8%; left:6%; clip-path:polygon(0 0,100% 20%,80% 100%); animation-delay:0s; }
+  .shard2{ width:50px; height:50px; top:70%; left:2%; clip-path:polygon(0 30%,100% 0,70% 100%); animation-delay:1.2s; }
+  .shard3{ width:90px; height:90px; top:2%; right:4%; clip-path:polygon(20% 0,100% 10%,80% 100%,0 70%); animation-delay:.6s; }
+  .shard4{ width:46px; height:46px; bottom:6%; right:10%; clip-path:polygon(0 0,100% 30%,60% 100%); animation-delay:1.8s; }
+  .shard5{ width:34px; height:34px; top:44%; right:0%; clip-path:polygon(50% 0,100% 100%,0 100%); animation-delay:.9s; border-color:rgba(227,178,60,0.4); background:linear-gradient(135deg, rgba(227,178,60,0.14), transparent); }
+  @keyframes float{ 0%,100%{ transform:translateY(0) rotate(0deg); } 50%{ transform:translateY(-14px) rotate(8deg); } }
+
+  .avatar-ring{
+    position:relative; width:280px; height:280px; border-radius:50%;
+    background:radial-gradient(circle at 35% 30%, rgba(95,227,142,0.16), transparent 70%);
+    border:1px solid var(--line); display:flex; align-items:center; justify-content:center;
+  }
+  .avatar-ring svg{ width:230px; height:230px; }
+  #avatarSlot{ width:230px; height:230px; display:flex; align-items:center; justify-content:center; }
+  #avatarSlot img{ width:100%; height:100%; object-fit:cover; border-radius:50%; border:1px solid var(--line); }
+  .badge-doc{
+    position:absolute; bottom:8px; left:-14px; background:var(--bg-alt); border:1px solid var(--line);
+    border-radius:10px; padding:10px 14px; display:flex; align-items:center; gap:8px;
+    font-family:'IBM Plex Mono', monospace; font-size:0.72rem; color:var(--muted);
+    animation:float 6s ease-in-out infinite; animation-delay:.4s;
+  }
+  .badge-doc b{ color:var(--accent); }
+
+  @media (max-width: 860px){
+    .hero{grid-template-columns:1fr; padding-top:40px;}
+    .hero-visual{ order:-1; min-height:280px; }
+  }
+
+  /* ---------- section shared ---------- */
+  section{padding:68px 0;}
+  .section-head{ display:flex; align-items:baseline; gap:16px; margin-bottom:40px; border-bottom:1px solid var(--line); padding-bottom:18px; }
+  .section-head h2{font-size:1.7rem;}
+
+  /* ---------- sobre ---------- */
+  #sobre .grid{ display:grid; grid-template-columns:1fr 1fr; gap:48px; }
+  #sobre p{color:var(--muted); font-size:1.02rem;}
+  .skills{list-style:none; margin:0; padding:0; display:grid; gap:2px;}
+  .skills li{
+    display:flex; gap:12px; align-items:center; font-size:0.95rem; padding:12px 10px;
+    border-radius:8px; transition:background .25s ease, transform .25s ease, padding-left .25s ease;
+  }
+  .skills li:hover{ background:var(--accent-dim); padding-left:16px; }
+  .skills li::before{ content:"//"; color:var(--accent); font-family:'IBM Plex Mono', monospace; font-weight:600; flex-shrink:0; }
+  @media (max-width:780px){ #sobre .grid{grid-template-columns:1fr;} }
+
+  /* ---------- serviços ---------- */
+  .services{ display:grid; gap:0; border-top:1px solid var(--line); }
+  .service-row{
+    display:grid; grid-template-columns:90px 1fr 1.3fr; gap:24px; padding:26px 14px;
+    border-bottom:1px solid var(--line); align-items:start; border-radius:8px;
+    transition:background .3s ease, padding-left .3s ease;
+  }
+  .service-row:hover{ background:var(--bg-alt); padding-left:22px; }
+  .service-row h3{font-size:1.12rem; font-weight:600;}
+  .service-row p{color:var(--muted); font-size:0.95rem; margin-top:6px;}
+  @media (max-width:720px){ .service-row{grid-template-columns:1fr; gap:6px;} }
+
+  /* ---------- portfolio: carrossel ---------- */
+  .carousel-viewport{
+    overflow-x:auto; scroll-snap-type:x mandatory; scrollbar-width:none; -ms-overflow-style:none;
+    margin:0 -28px; padding:4px 28px 8px;
+  }
+  .carousel-viewport::-webkit-scrollbar{display:none;}
+  .carousel-track{ display:flex; gap:22px; }
+  .case-card{
+    background:var(--card); border:1px solid var(--line); border-radius:12px; padding:26px;
+    display:flex; flex-direction:column; min-width:320px; max-width:320px; scroll-snap-align:start; flex-shrink:0;
+    transition:transform .3s cubic-bezier(.2,.8,.2,1), border-color .3s ease, box-shadow .3s ease;
+  }
+  .case-card:hover{ transform:translateY(-6px); border-color:var(--accent); box-shadow:0 16px 34px -18px rgba(95,227,142,0.35); }
+  .case-card .case-top{ display:flex; justify-content:space-between; align-items:flex-start; gap:10px; margin-bottom:14px; }
+  .case-card .client{ font-size:0.78rem; color:var(--muted); }
+  .case-status{ font-family:'IBM Plex Mono', monospace; font-size:0.68rem; padding:2px 8px; border-radius:20px; white-space:nowrap; }
+  .case-status.ok{ background:var(--accent-dim); color:var(--accent); }
+  .case-status.mid{ background:rgba(227,178,60,0.14); color:var(--accent-2); }
+  .case-card h3{font-size:1.12rem; margin-bottom:10px; line-height:1.25;}
+  .case-block{ margin-bottom:12px; }
+  .case-block .lbl{ font-family:'IBM Plex Mono', monospace; font-size:0.68rem; color:var(--accent); text-transform:uppercase; letter-spacing:.04em; display:block; margin-bottom:3px; }
+  .case-block p{ color:var(--muted); font-size:0.87rem; margin:0; }
+  .case-metrics{ display:flex; gap:14px; margin-top:auto; padding-top:14px; border-top:1px dashed var(--line); }
+  .case-metrics .n{ display:block; font-family:'Space Grotesk', sans-serif; font-size:1.3rem; font-weight:700; color:var(--ink); line-height:1; }
+  .case-metrics .l{ display:block; font-size:0.68rem; color:var(--muted); margin-top:3px; }
+  .case-more{
+    margin-top:14px; background:none; border:1px solid var(--line); color:var(--ink);
+    padding:9px 14px; border-radius:7px; font-size:0.82rem; cursor:pointer; text-align:left;
+    transition:border-color .25s ease, color .25s ease, gap .25s ease; display:flex; justify-content:space-between; align-items:center;
+  }
+  .case-more:hover{ border-color:var(--accent); color:var(--accent); }
+  .case-more:hover span{ transform:translateX(3px); }
+  .case-more span{ transition:transform .25s ease; }
+
+  .case-card.add-card{
+    border-style:dashed; align-items:flex-start; justify-content:center; color:var(--muted);
+    min-width:250px; max-width:250px;
+  }
+  .case-card.add-card .plus{
+    width:34px; height:34px; border:1px solid var(--line); border-radius:50%;
+    display:flex; align-items:center; justify-content:center; font-size:1.2rem; color:var(--accent); margin-bottom:14px;
+    transition:transform .3s ease, border-color .3s ease;
+  }
+  .case-card.add-card:hover .plus{ transform:rotate(90deg); border-color:var(--accent); }
+  .case-card.add-card h3{ font-family:'IBM Plex Sans', sans-serif; font-weight:500; font-size:0.98rem; color:var(--muted); }
+  .case-card.add-card p{ font-size:0.85rem; color:var(--muted); margin-top:8px; }
+
+  .carousel-controls{ display:flex; justify-content:flex-end; gap:10px; margin-top:18px; }
+  .car-btn{
+    width:38px; height:38px; border-radius:50%; border:1px solid var(--line); background:var(--card);
+    cursor:pointer; display:flex; align-items:center; justify-content:center; font-size:1rem; color:var(--ink);
+    transition:background .25s ease, border-color .25s ease, transform .25s ease;
+  }
+  .car-btn:hover{ background:var(--accent); color:#0C1210; border-color:var(--accent); transform:scale(1.06); }
+  .car-btn:disabled{ opacity:0.3; cursor:default; }
+  .car-btn:disabled:hover{ background:var(--card); color:var(--ink); transform:none; }
+
+  .portfolio-note{
+    margin-top:28px; padding:18px 22px; border-left:3px solid var(--accent);
+    background:var(--accent-dim); font-size:0.92rem; color:var(--ink); border-radius:0 8px 8px 0;
+  }
+  .portfolio-note code{ background:rgba(0,0,0,0.25); padding:1px 5px; border-radius:3px; font-family:'IBM Plex Mono', monospace; font-size:0.85em; color:var(--accent); }
+
+  /* ---------- project detail modal ---------- */
+  .modal{
+    position:fixed; inset:0; z-index:110; display:flex; align-items:center; justify-content:center;
+    padding:24px; visibility:hidden; pointer-events:none;
+  }
+  .modal.open{ visibility:visible; pointer-events:auto; }
+  .modal-backdrop{ position:absolute; inset:0; background:rgba(8,10,12,0.68); backdrop-filter:blur(4px); opacity:0; transition:opacity .3s ease; }
+  .modal.open .modal-backdrop{ opacity:1; }
+  .modal-box{
+    position:relative; max-width:560px; width:100%; max-height:82vh; overflow-y:auto;
+    background:var(--bg-alt); border:1px solid var(--line); border-radius:14px; padding:32px;
+    transform:scale(.92) translateY(16px); opacity:0; transition:transform .35s cubic-bezier(.2,.8,.2,1), opacity .35s ease;
+  }
+  .modal.open .modal-box{ transform:scale(1) translateY(0); opacity:1; }
+  .modal-close{
+    position:absolute; top:18px; right:18px; width:34px; height:34px; border-radius:8px;
+    background:none; border:1px solid var(--line); color:var(--ink); cursor:pointer; font-size:1rem;
+    transition:border-color .25s ease, color .25s ease, transform .25s ease;
+  }
+  .modal-close:hover{ border-color:var(--accent); color:var(--accent); transform:rotate(90deg); }
+  .modal-box h3{ font-size:1.4rem; margin-top:6px; padding-right:30px; }
+  .modal-box .client{ color:var(--muted); font-size:0.85rem; }
+  .modal-block{ margin-top:18px; }
+  .modal-block .lbl{ font-family:'IBM Plex Mono', monospace; font-size:0.7rem; color:var(--accent); text-transform:uppercase; letter-spacing:.04em; }
+  .modal-block p{ color:var(--muted); font-size:0.94rem; margin-top:6px; }
+  .modal-points{ list-style:none; margin:8px 0 0; padding:0; display:grid; gap:8px; }
+  .modal-points li{ font-size:0.9rem; color:var(--muted); padding-left:18px; position:relative; }
+  .modal-points li::before{ content:"→"; position:absolute; left:0; color:var(--accent); }
+  .modal-metrics{ display:flex; gap:20px; margin-top:20px; padding-top:18px; border-top:1px dashed var(--line); flex-wrap:wrap; }
+  .modal-metrics .n{ display:block; font-family:'Space Grotesk', sans-serif; font-size:1.5rem; font-weight:700; color:var(--ink); }
+  .modal-metrics .l{ display:block; font-size:0.72rem; color:var(--muted); margin-top:2px; }
+
+  /* ---------- contato ---------- */
+  #contato{ background:var(--bg-alt); border:1px solid var(--line); border-radius:14px; margin:0 28px 80px; padding:56px 40px; }
+  #contato .wrap{padding:0; max-width:none;}
+  #contato h2{color:var(--ink); font-size:1.8rem; max-width:20ch;}
+  #contato p.lead{color:var(--muted); margin-top:14px; max-width:52ch;}
+  .contact-list{ margin-top:32px; display:flex; gap:36px; flex-wrap:wrap; }
+  .contact-item .tag{color:var(--accent);}
+  .contact-item a{
+    display:inline-block; margin-top:6px; font-size:1.05rem; text-decoration:none;
+    border-bottom:1px solid var(--line); padding-bottom:4px; transition:border-color .25s ease, color .25s ease;
+  }
+  .contact-item a:hover{ border-color:var(--accent); color:var(--accent); }
+
+  footer{ text-align:center; padding:30px 28px 50px; color:var(--muted); font-size:0.85rem; }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="nav">
+    <div class="brand"><span class="brand-mark">HO</span>Helena Oliveira</div>
+    <nav>
+      <ul>
+        <li><a href="#sobre">Sobre</a></li>
+        <li><a href="#servicos">O que eu faço</a></li>
+        <li><a href="#portfolio">Casos</a></li>
+        <li><a href="#contato">Contato</a></li>
+      </ul>
+    </nav>
+    <button class="nav-toggle" id="navToggle" aria-label="Abrir menu"><span></span><span></span><span></span></button>
+  </div>
+</header>
+
+<div class="menu-modal" id="menuModal">
+  <div class="menu-backdrop" id="menuBackdrop"></div>
+  <div class="menu-panel">
+    <button class="menu-close" id="menuClose" aria-label="Fechar menu">✕</button>
+    <a href="#sobre">Sobre</a>
+    <a href="#servicos">O que eu faço</a>
+    <a href="#portfolio">Casos</a>
+    <a href="#contato">Contato</a>
+  </div>
+</div>
+
+<main>
+  <section class="hero wrap">
+    <div>
+      <p class="eyebrow-plain">&gt; requisitos / protótipos / automação de varejo</p>
+      <h1>Hi, eu sou <span class="accent-word">Helena</span>,<br>P.O. &amp; Analista<br>de Sistemas<span class="cursor-blink"></span></h1>
+      <p class="lead">Transformo processo confuso em documento que o time técnico consegue construir. Vivência em automação de setores, ERP Consinco TOTVS Varejo e bancos Oracle/SQL Server — do levantamento e dos testes funcionais ao protótipo validado com quem opera.</p>
+      <div class="hero-cta">
+        <a class="btn btn-primary" href="#contato">Conversar sobre um projeto <span class="ic">→</span></a>
+        <a class="btn btn-ghost" href="#portfolio">Ver documentos e protótipos</a>
+      </div>
+    </div>
+    <div class="hero-visual">
+      <div class="shard shard1"></div>
+      <div class="shard shard2"></div>
+      <div class="shard shard3"></div>
+      <div class="shard shard4"></div>
+      <div class="shard shard5"></div>
+      <div class="avatar-ring">
+        <!--
+          CAMPO DA FOTO — quando a Helena enviar uma foto real, substitua
+          todo o conteúdo de #avatarSlot (o <svg>...</svg> do avatar
+          ilustrado) por:
+            <img src="sua-foto.jpg" alt="Helena Oliveira">
+          O anel, os estilhaços animados e o tamanho circular já se
+          adaptam sozinhos — não precisa mexer em mais nada.
+        -->
+        <div id="avatarSlot">
+        <svg viewBox="0 0 200 200" xmlns="http://www.w3.org/2000/svg">
+          <circle cx="100" cy="100" r="98" fill="#1F252C"/>
+          <path d="M40 190 C40 140 65 115 100 115 C135 115 160 140 160 190 Z" fill="#5FE38E"/>
+          <path d="M40 190 C40 150 60 128 82 120 C78 132 78 150 90 160 L88 190 Z" fill="#3FBE71"/>
+          <path d="M160 190 C160 150 140 128 118 120 C122 132 122 150 110 160 L112 190 Z" fill="#3FBE71"/>
+          <circle cx="100" cy="82" r="46" fill="#C98D62"/>
+          <path d="M56 78 C54 42 78 22 100 22 C124 22 146 40 146 78 C146 60 134 66 124 58 C114 66 90 66 78 58 C70 66 58 60 56 78 Z" fill="#2A1B12"/>
+          <path d="M60 76 C58 100 56 116 66 128" stroke="#2A1B12" stroke-width="8" fill="none" stroke-linecap="round"/>
+          <circle cx="146" cy="98" r="7" fill="#2A1B12"/>
+          <rect x="66" y="86" width="30" height="20" rx="10" fill="none" stroke="#1F252C" stroke-width="4"/>
+          <rect x="104" y="86" width="30" height="20" rx="10" fill="none" stroke="#1F252C" stroke-width="4"/>
+          <line x1="96" y1="94" x2="104" y2="94" stroke="#1F252C" stroke-width="4"/>
+          <line x1="66" y1="90" x2="56" y2="88" stroke="#1F252C" stroke-width="4"/>
+          <line x1="134" y1="90" x2="144" y2="88" stroke="#1F252C" stroke-width="4"/>
+          <circle cx="80" cy="96" r="4" fill="#1F252C"/>
+          <circle cx="120" cy="96" r="4" fill="#1F252C"/>
+          <path d="M88 112 Q100 118 112 112" stroke="#7A4E33" stroke-width="3" fill="none" stroke-linecap="round"/>
+        </svg>
+        </div>
+      </div>
+      <div class="badge-doc">✓ <b>66/66</b> requisitos validados</div>
+    </div>
+  </section>
+
+  <section id="sobre">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <span class="tag">01 · quem escreve o requisito</span>
+        <h2>Sobre</h2>
+      </div>
+      <div class="grid">
+        <div data-reveal>
+          <p>Trabalho como Product Owner em projetos de automação de setores, sempre na ponte entre quem opera o negócio no dia a dia e quem constrói o sistema. Também dou treinamento de ferramentas novas dentro das empresas — o que me obrigou a desenvolver algo que considero meu maior diferencial: explicar coisa técnica para quem nunca viu aquilo antes, sem perder precisão.</p>
+          <p style="margin-top:16px;">Também atuo como testadora de software, sempre pela perspectiva funcional e da experiência de quem usa. Testo considerando a realidade da operação — o que faz aparecer não só o erro sistêmico, mas a falha de processo e o comportamento que trava o dia a dia de quem está na ponta. Acompanho e reporto o que os usuários levantam e, quando o caso pede uma nova funcionalidade ou aba no sistema, sou eu quem faz o levantamento dos requisitos e escreve a documentação que orienta o desenvolvimento.</p>
+          <p style="margin-top:16px;">Como analista de sistemas, também construo scripts de banco de dados relacionais em Oracle e SQL Server, e tenho vivência prática com o sistema Consinco TOTVS Varejo, usado em supermercados. No dossiê do Grupo Nosso Atacarejo, essa forma de trabalhar rendeu dois projetos levados do levantamento ao protótipo navegável, com IDs de requisito estáveis e cada mudança de desenho registrada, nunca escondida.</p>
+        </div>
+        <ul class="skills" data-reveal>
+          <li>Levantamento e escrita de requisitos funcionais e de negócio</li>
+          <li>Prototipagem de telas e fluxos para validação com o usuário final</li>
+          <li>Treinamento de ferramentas e sistemas novos para equipes operacionais</li>
+          <li>Scripts e consultas em Oracle e SQL Server</li>
+          <li>Vivência com Consinco TOTVS Varejo (automação de supermercado)</li>
+          <li>Testes funcionais e de experiência do usuário, com reporte e acompanhamento</li>
+          <li>Tradução de linguagem técnica para linguagem de operação, e vice-versa</li>
+        </ul>
+      </div>
+    </div>
+  </section>
+
+  <section id="servicos">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <span class="tag">02 · o que eu entrego</span>
+        <h2>Como eu ajudo sua empresa</h2>
+      </div>
+      <div class="services">
+        <div class="service-row" data-reveal>
+          <span class="tag">RF-01</span>
+          <h3>Documento de requisitos</h3>
+          <p>Levanto o processo com quem opera, escrevo a regra de negócio e os critérios de aceite num documento que serve tanto para o time técnico quanto para quem vai aprovar o projeto — com IDs estáveis e histórico de alteração.</p>
+        </div>
+        <div class="service-row" data-reveal>
+          <span class="tag">RF-02</span>
+          <h3>Protótipo navegável</h3>
+          <p>Antes de qualquer linha de código, a empresa vê e testa a tela — com o ID do requisito referenciado na própria interface, para validar contra o documento e não contra a impressão visual.</p>
+        </div>
+        <div class="service-row" data-reveal>
+          <span class="tag">RF-03</span>
+          <h3>Automação e scripts de banco</h3>
+          <p>Construção de scripts em Oracle e SQL Server para automatizar rotinas, migrar dados ou dar suporte a um novo processo, com o gatilho pensado a partir do próprio ERP.</p>
+        </div>
+        <div class="service-row" data-reveal>
+          <span class="tag">RF-04</span>
+          <h3>Testes funcionais e de experiência do usuário</h3>
+          <p>Testo pela perspectiva de quem usa: considero a realidade da operação para identificar erros sistêmicos, falhas de processo e comportamentos que atrapalham o uso da ferramenta. Acompanho e reporto os problemas levantados pelos usuários e transformo cada melhoria necessária em requisito documentado para o desenvolvimento.</p>
+        </div>
+        <div class="service-row" data-reveal>
+          <span class="tag">RF-05</span>
+          <h3>Treinamento de equipe</h3>
+          <p>Capacitação prática de times operacionais em ferramentas novas, com linguagem acessível para quem não é da área de tecnologia.</p>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section id="portfolio">
+    <div class="wrap">
+      <div class="section-head" data-reveal>
+        <span class="tag">03 · provas, não promessas</span>
+        <h2>Documentos e protótipos</h2>
+      </div>
+
+      <!--
+        ADICIONANDO NOVOS PROJETOS REAIS
+        Edite o array PROJECTS no <script>, no fim do arquivo.
+        Cada objeto novo vira um card automaticamente — não mexe no HTML.
+      -->
+      <div class="carousel" data-reveal="scale">
+        <div class="carousel-viewport" id="carViewport">
+          <div class="carousel-track" id="carTrack"></div>
+        </div>
+        <div class="carousel-controls">
+          <button class="car-btn" id="carPrev" aria-label="Caso anterior">‹</button>
+          <button class="car-btn" id="carNext" aria-label="Próximo caso">›</button>
+        </div>
+      </div>
+
+      <div class="portfolio-note" data-reveal>
+        Envie um documento ou protótipo (PDF, imagem, HTML ou texto) nesta conversa e ele é resumido e adicionado ao array <code>PROJECTS</code> deste arquivo, aparecendo aqui automaticamente — com o nome do cliente removido, se você preferir.
+      </div>
+    </div>
+  </section>
+</main>
+
+<div class="modal" id="projectModal">
+  <div class="modal-backdrop" id="modalBackdrop"></div>
+  <div class="modal-box" id="modalBox"></div>
+</div>
+
+<section id="contato">
+  <div class="wrap" data-reveal>
+    <h2>Vamos destravar o próximo projeto?</h2>
+    <p class="lead">Conta pra mim o processo que está travado, a ferramenta que o time não entende, ou o requisito que ninguém escreveu ainda. Eu respondo com clareza — e, se fizer sentido, com um documento pronto para o seu time técnico.</p>
+    <div class="contact-list">
+      <div class="contact-item">
+        <span class="tag">WhatsApp</span>
+        <a href="https://wa.me/5584996788296" target="_blank" rel="noopener">(84) 99678-8296</a>
+      </div>
+      <div class="contact-item">
+        <span class="tag">E-mail</span>
+        <a href="mailto:helena999end@gmail.com">helena999end@gmail.com</a>
+      </div>
+    </div>
+  </div>
+</section>
+
+<footer>
+  Helena Oliveira — Product Owner &amp; Analista de Sistemas
+</footer>
+
+<script>
+  // ---------------------------------------------------------------
+  // PROJECTS — cada objeto vira um card no carrossel + o conteúdo do
+  // modal "Ver detalhes". Para adicionar um caso real, copie um
+  // bloco {...} e preencha os campos.
+  // ---------------------------------------------------------------
+  const PROJECTS = [
+    {
+      client: "Grupo Nosso Atacarejo",
+      status: "ok",
+      statusLabel: "Onda 1 aprovada",
+      title: "Automação da Nota de Devolução",
+      problem: "Nota de devolução dependia de alguém escanear o papel para existir no processo. Sem envio, a cobrança ao fornecedor nunca começava.",
+      solution: "Gatilho invertido: a automação descobre a devolução direto no Consinco (título em aberto DEVREC) e conduz a cobrança por e-mail, com auditoria de cada etapa.",
+      metrics: [ {n:"66", l:"requisitos"}, {n:"2", l:"propostas comparadas"}, {n:"45", l:"na Onda 1"} ],
+      detailPoints: [
+        "Duas propostas de arquitetura levantadas e comparadas antes de escolher o gatilho pelo ERP.",
+        "19 regras de negócio e 9 requisitos não-funcionais documentados junto aos 66 funcionais.",
+        "Fluxograma técnico com 17 passos e 4 pontos de decisão para o time de dev implementar sem ambiguidade.",
+        "10 pontos de integração mapeados entre o Consinco e o processo de cobrança."
+      ]
+    },
+    {
+      client: "Operação de loja — Grupo Nosso Atacarejo",
+      status: "mid",
+      statusLabel: "Protótipo pronto",
+      title: "Talão Digital de Uso e Consumo",
+      problem: "Talão de papel preenchido à mão para retirar o lanche do colaborador: erro de código, sem trava de quantidade e sem dado estruturado para o fechamento.",
+      solution: "App no celular do colaborador com dois pontos de leitura de código de barras — etiqueta do produto e crachá de quem libera — substituindo o papel sem exigir aparelho do balconista.",
+      metrics: [ {n:"66", l:"requisitos"}, {n:"30", l:"regras de negócio"}, {n:"4", l:"versões no ciclo"} ],
+      detailPoints: [
+        "Levantamento reconstruído depois de validação direto com o operador de loja.",
+        "Três perfis de uso desenhados: gestor da grade, colaborador do setor e balconista sem necessidade de login.",
+        "Três tipos de grade previstos: padrão, fechamento de mês e evento pontual.",
+        "Protótipo navegável entregue com os dois perfis logados já demonstráveis."
+      ]
+    }
+  ];
+
+  function statusClass(s){ return s === "ok" ? "ok" : "mid"; }
+
+  function renderProjects(){
+    const track = document.getElementById('carTrack');
+    track.innerHTML = "";
+    PROJECTS.forEach(function(p, idx){
+      const card = document.createElement('div');
+      card.className = 'case-card';
+      const metricsHtml = p.metrics.map(function(m){
+        return '<div><span class="n">' + m.n + '</span><span class="l">' + m.l + '</span></div>';
+      }).join('');
+      card.innerHTML =
+        '<div class="case-top">' +
+          '<span class="client">' + p.client + '</span>' +
+          '<span class="case-status ' + statusClass(p.status) + '">' + p.statusLabel + '</span>' +
+        '</div>' +
+        '<h3>' + p.title + '</h3>' +
+        '<div class="case-block"><span class="lbl">Problema</span><p>' + p.problem + '</p></div>' +
+        '<div class="case-block"><span class="lbl">Solução</span><p>' + p.solution + '</p></div>' +
+        '<div class="case-metrics">' + metricsHtml + '</div>' +
+        '<button class="case-more" data-idx="' + idx + '">Ver detalhes <span>→</span></button>';
+      track.appendChild(card);
+    });
+
+    const addCard = document.createElement('div');
+    addCard.className = 'case-card add-card';
+    addCard.innerHTML = '<div class="plus">+</div><h3>Seu próximo case entra aqui</h3><p>Envie o documento ou protótipo para ele virar um card real nesta lista.</p>';
+    track.appendChild(addCard);
+
+    track.querySelectorAll('.case-more').forEach(function(btn){
+      btn.addEventListener('click', function(){ openModal(PROJECTS[parseInt(btn.dataset.idx, 10)]); });
+    });
+  }
+
+  function setupCarousel(){
+    const viewport = document.getElementById('carViewport');
+    const prev = document.getElementById('carPrev');
+    const next = document.getElementById('carNext');
+    function step(){ const card = viewport.querySelector('.case-card'); return card ? card.offsetWidth + 22 : 320; }
+    function updateButtons(){
+      prev.disabled = viewport.scrollLeft <= 4;
+      next.disabled = viewport.scrollLeft >= (viewport.scrollWidth - viewport.clientWidth - 4);
+    }
+    prev.addEventListener('click', function(){ viewport.scrollBy({left: -step(), behavior:'smooth'}); });
+    next.addEventListener('click', function(){ viewport.scrollBy({left: step(), behavior:'smooth'}); });
+    viewport.addEventListener('scroll', updateButtons);
+    window.addEventListener('resize', updateButtons);
+    updateButtons();
+  }
+
+  // ---- project detail modal ----
+  const projectModal = document.getElementById('projectModal');
+  const modalBox = document.getElementById('modalBox');
+  function openModal(p){
+    const metricsHtml = p.metrics.map(function(m){
+      return '<div><span class="n">' + m.n + '</span><span class="l">' + m.l + '</span></div>';
+    }).join('');
+    const pointsHtml = p.detailPoints.map(function(pt){ return '<li>' + pt + '</li>'; }).join('');
+    modalBox.innerHTML =
+      '<button class="modal-close" id="modalCloseBtn" aria-label="Fechar">✕</button>' +
+      '<span class="client">' + p.client + '</span>' +
+      '<h3>' + p.title + '</h3>' +
+      '<div class="modal-block"><span class="lbl">Problema</span><p>' + p.problem + '</p></div>' +
+      '<div class="modal-block"><span class="lbl">Solução</span><p>' + p.solution + '</p></div>' +
+      '<div class="modal-block"><span class="lbl">Como foi conduzido</span><ul class="modal-points">' + pointsHtml + '</ul></div>' +
+      '<div class="modal-metrics">' + metricsHtml + '</div>';
+    projectModal.classList.add('open');
+    document.getElementById('modalCloseBtn').addEventListener('click', closeModal);
+    document.body.style.overflow = 'hidden';
+  }
+  function closeModal(){ projectModal.classList.remove('open'); document.body.style.overflow = ''; }
+  document.getElementById('modalBackdrop').addEventListener('click', closeModal);
+
+  // ---- mobile menu modal ----
+  const menuModal = document.getElementById('menuModal');
+  document.getElementById('navToggle').addEventListener('click', function(){ menuModal.classList.add('open'); document.body.style.overflow = 'hidden'; });
+  document.getElementById('menuClose').addEventListener('click', closeMenu);
+  document.getElementById('menuBackdrop').addEventListener('click', closeMenu);
+  function closeMenu(){ menuModal.classList.remove('open'); document.body.style.overflow = ''; }
+  document.querySelectorAll('.menu-panel a').forEach(function(a){ a.addEventListener('click', closeMenu); });
+
+  document.addEventListener('keydown', function(e){
+    if(e.key === 'Escape'){ closeModal(); closeMenu(); }
+  });
+
+  // ---- scroll reveal ----
+  function setupReveal(){
+    const items = document.querySelectorAll('[data-reveal]');
+    if(!('IntersectionObserver' in window)){ items.forEach(function(el){ el.classList.add('in-view'); }); return; }
+    const io = new IntersectionObserver(function(entries){
+      entries.forEach(function(entry){
+        if(entry.isIntersecting){ entry.target.classList.add('in-view'); io.unobserve(entry.target); }
+      });
+    }, { threshold: 0.15, rootMargin: '0px 0px -40px 0px' });
+    items.forEach(function(el){ io.observe(el); });
+  }
+
+  renderProjects();
+  setupCarousel();
+  setupReveal();
+</script>
+
+</body>
+</html>

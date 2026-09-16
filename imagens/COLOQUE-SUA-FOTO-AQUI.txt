@@ -1,0 +1,9 @@
+Salve sua foto nesta pasta (ex: helena.jpg).
+
+Depois, abra o arquivo index.html num editor de texto, procure por
+"avatarSlot" e troque todo o conteudo desse bloco (o <svg>...</svg>
+do avatar ilustrado) por esta linha:
+
+  <img src="imagens/helena.jpg" alt="Helena Oliveira">
+
+O recorte redondo, o anel e os estilhacos animados se ajustam sozinhos.

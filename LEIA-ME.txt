@@ -1,0 +1,48 @@
+PORTFOLIO - HELENA OLIVEIRA
+Product Owner & Analista de Sistemas
+
+-------------------------------------------------
+COMO ABRIR
+-------------------------------------------------
+Basta dar dois cliques no arquivo "index.html".
+Ele abre no navegador de qualquer computador (Windows, Mac ou Linux),
+sem precisar instalar nada e sem precisar de internet para funcionar
+(a internet so deixa as fontes com o visual original).
+
+-------------------------------------------------
+O QUE TEM NESTA PASTA
+-------------------------------------------------
+index.html  -> o site inteiro (visual, textos e funcionamento)
+imagens/    -> pasta para voce guardar sua foto quando tiver uma
+
+-------------------------------------------------
+COMO ADICIONAR UM PROJETO NOVO NO CARROSSEL
+-------------------------------------------------
+1. Abra "index.html" com o Bloco de Notas (ou VS Code).
+2. Procure por: const PROJECTS
+3. Copie um bloco inteiro { ... } que ja esta la e cole logo abaixo,
+   separando com virgula.
+4. Preencha os campos:
+
+   client       -> nome do cliente
+   status       -> "ok" (selo verde) ou "mid" (selo amarelo)
+   statusLabel  -> texto do selo, ex: "Onda 1 aprovada"
+   title        -> nome do projeto
+   problem      -> qual era o problema
+   solution     -> o que voce resolveu
+   metrics      -> ate 3 numeros de destaque
+   detailPoints -> topicos que aparecem no modal "Ver detalhes"
+
+5. Salve e atualize a pagina no navegador. Pronto.
+
+-------------------------------------------------
+COMO COLOCAR O SITE NO AR (opcional)
+-------------------------------------------------
+Como e um unico arquivo, qualquer servico gratuito aceita:
+arraste a pasta para netlify.com/drop, ou publique no GitHub Pages.
+
+-------------------------------------------------
+CONTATO CONFIGURADO NO SITE
+-------------------------------------------------
+WhatsApp: (84) 99678-8296
+E-mail:   helena999end@gmail.com
