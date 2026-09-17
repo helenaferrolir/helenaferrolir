@@ -12,11 +12,13 @@ sem precisar instalar nada e sem precisar de internet para funcionar
 -------------------------------------------------
 O QUE TEM NESTA PASTA
 -------------------------------------------------
-index.html  -> o site inteiro (visual, textos e funcionamento)
-imagens/    -> pasta para voce guardar sua foto quando tiver uma
+index.html  -> o site inteiro (visual, textos, sua foto e funcionamento,
+                tudo junto num arquivo so)
+imagens/    -> pasta para guardar as logos das empresas quando quiser
+                trocar os monogramas do carrossel de Experiencia
 
 -------------------------------------------------
-COMO ADICIONAR UM PROJETO NOVO NO CARROSSEL
+COMO ADICIONAR UM PROJETO NOVO NO CARROSSEL DE CASOS
 -------------------------------------------------
 1. Abra "index.html" com o Bloco de Notas (ou VS Code).
 2. Procure por: const PROJECTS
@@ -34,6 +36,22 @@ COMO ADICIONAR UM PROJETO NOVO NO CARROSSEL
    detailPoints -> topicos que aparecem no modal "Ver detalhes"
 
 5. Salve e atualize a pagina no navegador. Pronto.
+
+-------------------------------------------------
+COMO ADICIONAR/EDITAR UMA EXPERIENCIA PROFISSIONAL
+-------------------------------------------------
+1. Procure por: const EXPERIENCE
+2. Copie um bloco { ... } e preencha: period, company, role, initials,
+   logo (deixe "" para mostrar so as iniciais) e desc.
+3. Salve e atualize a pagina.
+
+-------------------------------------------------
+TROCAR SUA FOTO
+-------------------------------------------------
+Procure por: id="avatarSlot"
+Troque a tag <img ...> por outra apontando para um arquivo local, ex:
+  <img src="imagens/helena.jpg" alt="Helena Oliveira">
+(salvando a nova foto dentro da pasta imagens/)
 
 -------------------------------------------------
 COMO COLOCAR O SITE NO AR (opcional)
