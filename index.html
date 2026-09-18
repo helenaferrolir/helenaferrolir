@@ -14,7 +14,7 @@
     --ink: #F3F4F1;
     --muted: #9BA3AC;
     --accent: #5FE38E;
-    --accent-dim: rgba(95,227,142,0.12);
+    --accent-dim: rgba(80, 116, 92, 0.12);
     --accent-2: #E3B23C;
     --line: #2B3138;
   }
@@ -235,8 +235,8 @@
   .case-more:hover span{ transform:translateX(3px); }
   .case-more span{ transition:transform .25s ease; }
 
-  #carTrack{ justify-content:center; }
-  @media (max-width:700px){ #carTrack{ justify-content:flex-start; } }
+  #carTrack{ justify-content:flex-start; }
+  #carTrack.is-centered{ justify-content:center; }
 
   /* ---------- experiência ---------- */
   .exp-card{
@@ -558,6 +558,53 @@
         "Três tipos de grade previstos: padrão, fechamento de mês e evento pontual.",
         "Protótipo navegável entregue com os dois perfis logados já demonstráveis."
       ]
+    },
+    {
+      client: "MS Consultoria — Grupo Nosso Atacarejo",
+      status: "ok",
+      statusLabel: "Aprovado e implementado",
+      title: "Redesenho da aba Gestão de Projetos",
+      problem: "A tela de Projetos exibia informação demais de uma vez, e a gestão de atividades vivia separada em outra subaba — obrigando o usuário a ir e voltar entre Projetos e Atividades para acompanhar o mesmo trabalho.",
+      solution: "Fim da subaba Atividades: tudo passa a ser acessado a partir do próprio projeto. A listagem migra para cards (no padrão das Propostas do Painel de Contratos) e cada projeto ganha uma tela dedicada, com abas de informações gerais, atividades, anexos e indicadores.",
+      metrics: [ {n:"8", l:"campos por card"}, {n:"4", l:"abas de detalhe"}, {n:"2", l:"versões do levantamento"} ],
+      detailPoints: [
+        "Card do projeto reúne nome, descrição, responsável, datas, prioridade, status e indicador de progresso — visão rápida sem precisar abrir o projeto.",
+        "Abrir o card leva a uma tela própria (não um modal), para concentrar tudo sobre aquele projeto em um só lugar.",
+        "Atividades podem ser vistas em lista ou em kanban, com mudança de status por arrastar-e-soltar ou edição manual.",
+        "Cadastro de nova atividade em fluxo por etapas (3 a 4 campos por tela), no lugar de um formulário único, para reduzir a quantidade de informação exibida de uma vez."
+      ]
+    },
+    {
+      client: "Grupo Nosso Atacarejo",
+      status: "ok",
+      statusLabel: "Em operação nas lojas",
+      title: "App Consulta de Preço por QR Code — Levantamento de Pendências",
+      problem: "O app de operação de loja (consulta de preço, estoque/endereçamento e validade) estava quase pronto, mas faltava mapear o que ainda travava a implantação: pontos sem teste, modelo de usuário indefinido e um módulo inteiro sem a consulta que o alimentava.",
+      solution: "Levantamento fechando o que faltava para ir para produção: pontos de teste por módulo, comparação do preço da etiqueta contra quatro fontes diferentes, e as decisões de acesso e roadmap que destravavam o lançamento. O app já roda nas lojas.",
+      metrics: [ {n:"3", l:"módulos mapeados"}, {n:"4", l:"fontes de preço comparadas"}, {n:"2", l:"modelos de usuário avaliados"} ],
+      detailPoints: [
+        "Consulta de Preços por QR Code cruza o valor da etiqueta com o preço normal e promocional do ERP, mais MercaFácil e Scanntech, sinalizando divergência.",
+        "Pontos de teste definidos por módulo: leitura única do QR Code, quantidade de etiquetas impressas e tolerância de estoque para setores como hortifruti e açougue.",
+        "Duas opções de modelo de acesso avaliadas — usuário individual por colaborador vs. usuário por sessão/coletor — com vantagens e riscos de cada uma.",
+        "Pendências de médio/longo prazo mapeadas: publicação na Play Store (hoje só APK), integração com o sistema de placas das lojas e definição do nome oficial do app."
+      ]
+    },
+    {
+      client: "MS Consultoria — Grupo Nosso Atacarejo",
+      status: "mid",
+      statusLabel: "Aguardando aprovação",
+      title: "Nova Aba de Despesas — Recebimento Fiscal",
+      problem: "O controle de despesas dos setores era feito em planilha compartilhada: cada setor registrava nota fiscal e boleto à mão, mudava o status manualmente (Recebido, Lançado, Conferido) e guardava os documentos à parte no Drive — um fluxo manual, lento e sujeito a falha entre Fiscal/Contábil e Financeiro.",
+      solution: "Nova aba Despesas dentro da própria plataforma, com Cadastro de Despesas e Painel de Despesas. O status passa a mudar sozinho a cada etapa — Aguardando Aprovação, Aprovado, Lançado, Conferido Lançamento — notificando por e-mail e push quem precisa agir em cada uma, com anexo obrigatório de boleto/nota e um dashboard de acompanhamento para a gerência.",
+      metrics: [ {n:"20", l:"requisitos funcionais"}, {n:"4", l:"etapas do fluxo"}, {n:"5", l:"anos de retenção exigida"} ],
+      detailPoints: [
+        "Cadastro com campos padronizados (fornecedor, centro de custo, valor, vencimento, forma de pagamento) e anexo obrigatório de boleto ou nota fiscal.",
+        "Cada setor só enxerga as próprias despesas — visibilidade restrita por centro de custo.",
+        "Aprovação e conferência de lançamento podem ser rejeitadas com justificativa, devolvendo a despesa para o colaborador corrigir e reenviar.",
+        "Dashboard gerencial com despesa por centro de custo, lead time por etapa e produtividade por colaborador.",
+        "Estrutura de centro de custo levantada e vinculada aos códigos já usados no ERP Consinco.",
+        "Documento aguardando aprovação formal para iniciar a implementação."
+      ]
     }
   ];
 
@@ -661,8 +708,10 @@
     const viewport = document.getElementById(viewportId);
     const prev = document.getElementById(prevId);
     const next = document.getElementById(nextId);
+    const track = viewport.querySelector('.carousel-track');
     function step(){ const card = viewport.querySelector('.case-card, .exp-card'); return card ? card.offsetWidth + 22 : 320; }
     function updateButtons(){
+      if (track) track.classList.toggle('is-centered', track.scrollWidth <= viewport.clientWidth);
       prev.disabled = viewport.scrollLeft <= 4;
       next.disabled = viewport.scrollLeft >= (viewport.scrollWidth - viewport.clientWidth - 4);
     }
