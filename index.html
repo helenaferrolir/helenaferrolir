@@ -260,6 +260,12 @@
     display:inline-block; margin-bottom:12px;
   }
   .exp-card p.exp-desc{ color:var(--muted); font-size:0.88rem; margin:0; }
+  #expViewport{
+    scroll-snap-type:none;
+    -webkit-mask-image:linear-gradient(90deg, transparent 0, #000 44px, #000 calc(100% - 44px), transparent 100%);
+            mask-image:linear-gradient(90deg, transparent 0, #000 44px, #000 calc(100% - 44px), transparent 100%);
+  }
+  .car-btn svg{ width:14px; height:14px; fill:currentColor; display:block; }
 
   .carousel-controls{ display:flex; justify-content:flex-end; gap:10px; margin-top:18px; }
   .car-btn{
@@ -310,13 +316,25 @@
   #contato .wrap{padding:0; max-width:none;}
   #contato h2{color:var(--ink); font-size:1.8rem; max-width:20ch;}
   #contato p.lead{color:var(--muted); margin-top:14px; max-width:52ch;}
-  .contact-list{ margin-top:32px; display:flex; gap:36px; flex-wrap:wrap; }
-  .contact-item .tag{color:var(--accent);}
-  .contact-item a{
-    display:inline-block; margin-top:6px; font-size:1.05rem; text-decoration:none;
-    border-bottom:1px solid var(--line); padding-bottom:4px; transition:border-color .25s ease, color .25s ease;
+  .contact-actions{ margin-top:32px; display:flex; gap:16px; flex-wrap:wrap; }
+  .contact-btn{
+    display:inline-flex; align-items:center; justify-content:center; gap:12px;
+    padding:15px 28px; border-radius:12px; font-size:1rem; font-weight:500; text-decoration:none;
+    border:1px solid transparent; cursor:pointer;
+    transition:transform .25s ease, box-shadow .25s ease, border-color .25s ease, color .25s ease, background .25s ease;
   }
-  .contact-item a:hover{ border-color:var(--accent); color:var(--accent); }
+  .contact-btn svg{
+    width:24px; height:24px; flex-shrink:0; fill:none; stroke:currentColor; stroke-width:2;
+    stroke-linecap:round; stroke-linejoin:round;
+    transition:transform .35s cubic-bezier(.3,.8,.3,1);
+  }
+  .contact-btn--wa{ background:var(--accent); color:#0C1210; }
+  .contact-btn--wa:hover{ transform:translateY(-3px); box-shadow:0 14px 28px -12px rgba(95,227,142,0.6); }
+  .contact-btn--wa:hover svg{ transform:rotate(-12deg) scale(1.14); }
+  .contact-btn--mail{ background:transparent; border-color:var(--line); color:var(--ink); }
+  .contact-btn--mail:hover{ border-color:var(--accent); color:var(--accent); transform:translateY(-3px); }
+  .contact-btn--mail:hover svg{ transform:translateY(-2px) scale(1.14); }
+  @media (max-width:520px){ .contact-btn{ width:100%; } }
 
   footer{ text-align:center; padding:30px 28px 50px; color:var(--muted); font-size:0.85rem; }
 </style>
@@ -428,6 +446,7 @@
           <div class="carousel-track" id="expTrack"></div>
         </div>
         <div class="carousel-controls">
+          <button class="car-btn" id="expToggle" aria-label="Pausar movimento" aria-pressed="false"></button>
           <button class="car-btn" id="expPrev" aria-label="Experiência anterior">‹</button>
           <button class="car-btn" id="expNext" aria-label="Próxima experiência">›</button>
         </div>
@@ -505,15 +524,21 @@
   <div class="wrap" data-reveal>
     <h2>Vamos destravar o próximo projeto?</h2>
     <p class="lead">Conta pra mim o processo que está travado, a ferramenta que o time não entende, ou o requisito que ninguém escreveu ainda. Eu respondo com clareza — e, se fizer sentido, com um documento pronto para o seu time técnico.</p>
-    <div class="contact-list">
-      <div class="contact-item">
-        <span class="tag">WhatsApp</span>
-        <a href="https://wa.me/5584996788296" target="_blank" rel="noopener">(84) 99678-8296</a>
-      </div>
-      <div class="contact-item">
-        <span class="tag">E-mail</span>
-        <a href="mailto:helena999end@gmail.com">helena999end@gmail.com</a>
-      </div>
+    <div class="contact-actions">
+      <a class="contact-btn contact-btn--wa" id="btnWhats" href="#contato" target="_blank" rel="noopener" aria-label="Chamar no WhatsApp">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M12 2.5a9.5 9.5 0 0 0-8.1 14.4L2.7 21.3l4.5-1.2A9.5 9.5 0 1 0 12 2.5z"/>
+          <path transform="translate(6.3 6.3) scale(0.475)" d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"/>
+        </svg>
+        <span>Chamar no WhatsApp</span>
+      </a>
+      <a class="contact-btn contact-btn--mail" id="btnMail" href="#contato" aria-label="Enviar e-mail">
+        <svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 4h16a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2z"/>
+          <polyline points="22,6 12,13 2,6"/>
+        </svg>
+        <span>Enviar e-mail</span>
+      </a>
     </div>
   </div>
 </section>
@@ -532,22 +557,24 @@
     {
       client: "Grupo Nosso Atacarejo",
       status: "ok",
-      statusLabel: "Onda 1 aprovada",
+      statusLabel: "Onda 2 implementada",
       title: "Automação da Nota de Devolução",
       problem: "Nota de devolução dependia de alguém escanear o papel para existir no processo. Sem envio, a cobrança ao fornecedor nunca começava.",
-      solution: "Gatilho invertido: a automação descobre a devolução direto no Consinco (título em aberto DEVREC) e conduz a cobrança por e-mail, com auditoria de cada etapa.",
+      solution: "Gatilho invertido: a automação descobre a devolução direto no Consinco (título em aberto DEVREC), com auditoria de cada etapa. A cobrança ao fornecedor por e-mail está em processo de automatização.",
       metrics: [ {n:"66", l:"requisitos"}, {n:"2", l:"propostas comparadas"}, {n:"45", l:"na Onda 1"} ],
       detailPoints: [
         "Duas propostas de arquitetura levantadas e comparadas antes de escolher o gatilho pelo ERP.",
         "19 regras de negócio e 9 requisitos não-funcionais documentados junto aos 66 funcionais.",
         "Fluxograma técnico com 17 passos e 4 pontos de decisão para o time de dev implementar sem ambiguidade.",
-        "10 pontos de integração mapeados entre o Consinco e o processo de cobrança."
+        "10 pontos de integração mapeados entre o Consinco e o processo de cobrança.",
+        "Onda 1 aprovada e, na sequência, Onda 2 aprovada e implementada.",
+        "Em andamento: automação das cobranças ao fornecedor."
       ]
     },
     {
       client: "Operação de loja — Grupo Nosso Atacarejo",
-      status: "mid",
-      statusLabel: "Protótipo pronto",
+      status: "ok",
+      statusLabel: "Aprovado e implementado",
       title: "Talão Digital de Uso e Consumo",
       problem: "Talão de papel preenchido à mão para retirar o lanche do colaborador: erro de código, sem trava de quantidade e sem dado estruturado para o fechamento.",
       solution: "App no celular do colaborador com dois pontos de leitura de código de barras — etiqueta do produto e crachá de quem libera — substituindo o papel sem exigir aparelho do balconista.",
@@ -556,7 +583,8 @@
         "Levantamento reconstruído depois de validação direto com o operador de loja.",
         "Três perfis de uso desenhados: gestor da grade, colaborador do setor e balconista sem necessidade de login.",
         "Três tipos de grade previstos: padrão, fechamento de mês e evento pontual.",
-        "Protótipo navegável entregue com os dois perfis logados já demonstráveis."
+        "Protótipo navegável entregue com os dois perfis logados já demonstráveis.",
+        "Projeto aprovado e já implementado."
       ]
     },
     {
@@ -769,10 +797,122 @@
     items.forEach(function(el){ io.observe(el); });
   }
 
+  // Contato: os links são montados aqui para o número e o e-mail não aparecerem na página.
+  // Para trocar o contato, edite os pedaços abaixo.
+  function setupContact(){
+    const phone = ['55', '84', '996788296'].join('');
+    const mail  = ['helena999end', 'gmail.com'].join('@');
+    const wa = document.getElementById('btnWhats');
+    const em = document.getElementById('btnMail');
+    wa.href = 'https://wa.me/' + phone + '?text=' + encodeURIComponent('Olá, Helena! Vi seu portfólio e gostaria de conversar sobre um projeto.');
+    em.href = 'mailto:' + mail + '?subject=' + encodeURIComponent('Contato pelo portfólio');
+  }
+
+  // Experiência: carrossel em movimento contínuo (pausa ao passar o mouse, ao tocar ou no botão de pausa).
+  function setupExperienceMarquee(){
+    const viewport = document.getElementById('expViewport');
+    const track = document.getElementById('expTrack');
+    const prev = document.getElementById('expPrev');
+    const next = document.getElementById('expNext');
+    const toggle = document.getElementById('expToggle');
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    const originals = Array.from(track.children);
+    const SPEED = 45; // pixels por segundo
+    const ICON_PAUSE = '<svg viewBox="0 0 14 14" aria-hidden="true"><rect x="2" y="1" width="3.6" height="12" rx="1"/><rect x="8.4" y="1" width="3.6" height="12" rx="1"/></svg>';
+    const ICON_PLAY  = '<svg viewBox="0 0 14 14" aria-hidden="true"><path d="M3 1.2v11.6a.6.6 0 0 0 .9.5l9-5.8a.6.6 0 0 0 0-1L3.9.7A.6.6 0 0 0 3 1.2z"/></svg>';
+
+    if (!reduce) {
+      originals.forEach(function(c){
+        const clone = c.cloneNode(true);
+        clone.setAttribute('aria-hidden', 'true');
+        track.appendChild(clone);
+      });
+    } else {
+      toggle.style.display = 'none';
+    }
+
+    function gap(){ return parseFloat(getComputedStyle(track).columnGap) || 22; }
+    function step(){ return originals[0].offsetWidth + gap(); }
+    let loop = 0;
+    function measure(){
+      loop = reduce ? 0 : (track.children[originals.length].offsetLeft - originals[0].offsetLeft);
+    }
+    measure();
+    window.addEventListener('resize', measure);
+    window.addEventListener('load', measure);
+
+    let pos = viewport.scrollLeft;
+    let holdUntil = 0, needSync = false, userPaused = false, hovering = false, visible = true;
+    let last = performance.now();
+
+    function hold(ms){ holdUntil = performance.now() + ms; needSync = true; }
+
+    function frame(now){
+      const dt = Math.min(now - last, 64) / 1000;
+      last = now;
+      const held = now < holdUntil || hovering || userPaused;
+      if (!reduce && loop && visible && !document.hidden) {
+        if (held) {
+          needSync = true;
+        } else {
+          if (needSync) { pos = viewport.scrollLeft; needSync = false; }
+          if (pos >= loop) pos -= loop;
+          pos += SPEED * dt;
+          if (pos >= loop) pos -= loop;
+          viewport.scrollLeft = pos;
+        }
+      }
+      requestAnimationFrame(frame);
+    }
+    requestAnimationFrame(frame);
+
+    let btnUntil = 0; // enquanto o botão anima, não "emenda" o loop no meio do movimento
+    viewport.addEventListener('scroll', function(){
+      if (loop && performance.now() > btnUntil && viewport.scrollLeft >= loop + 1) viewport.scrollLeft -= loop;
+    });
+    viewport.addEventListener('mouseenter', function(){ hovering = true; });
+    viewport.addEventListener('mouseleave', function(){ hovering = false; hold(400); });
+    ['touchstart', 'wheel', 'pointerdown'].forEach(function(evt){
+      viewport.addEventListener(evt, function(){ hold(2500); }, { passive: true });
+    });
+
+    prev.addEventListener('click', function(){
+      hold(900);
+      btnUntil = performance.now() + 800;
+      if (loop && viewport.scrollLeft < step()) viewport.scrollLeft += loop;
+      viewport.scrollBy({ left: -step(), behavior: 'smooth' });
+    });
+    next.addEventListener('click', function(){
+      hold(900);
+      btnUntil = performance.now() + 800;
+      viewport.scrollBy({ left: step(), behavior: 'smooth' });
+    });
+
+    function paintToggle(){
+      toggle.innerHTML = userPaused ? ICON_PLAY : ICON_PAUSE;
+      toggle.setAttribute('aria-pressed', String(userPaused));
+      toggle.setAttribute('aria-label', userPaused ? 'Retomar movimento' : 'Pausar movimento');
+    }
+    paintToggle();
+    toggle.addEventListener('click', function(){
+      userPaused = !userPaused;
+      if (!userPaused) hold(200);
+      paintToggle();
+    });
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver(function(entries){
+        visible = entries[0].isIntersecting;
+        if (visible) needSync = true;
+      }).observe(viewport);
+    }
+  }
+
   renderProjects();
   renderExperience();
   setupCarousel('carViewport', 'carPrev', 'carNext');
-  setupCarousel('expViewport', 'expPrev', 'expNext');
+  setupExperienceMarquee();
+  setupContact();
   setupReveal();
 </script>
 

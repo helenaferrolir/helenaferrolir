@@ -60,7 +60,28 @@ Como e um unico arquivo, qualquer servico gratuito aceita:
 arraste a pasta para netlify.com/drop, ou publique no GitHub Pages.
 
 -------------------------------------------------
-CONTATO CONFIGURADO NO SITE
+CONTATO (BOTOES WHATSAPP E E-MAIL)
 -------------------------------------------------
-WhatsApp: (84) 99678-8296
-E-mail:   helena999end@gmail.com
+Os botoes da secao Contato nao mostram numero nem e-mail na tela.
+Para trocar o contato, abra index.html, procure por: function setupContact
+e edite os pedacos do numero (phone) e do e-mail (mail) ali dentro.
+
+-------------------------------------------------
+CARROSSEL DE EXPERIENCIA EM MOVIMENTO
+-------------------------------------------------
+Ele anda sozinho e pausa ao passar o mouse, ao tocar na tela ou no botao
+de pausa. Para mudar a velocidade, procure por: const SPEED (pixels por segundo).
+
+-------------------------------------------------
+ATUALIZAR UM REPOSITORIO GIT QUE JA EXISTE
+-------------------------------------------------
+Esta pasta e o site completo e atualizado. Para o git enxergar a mudanca,
+copie o index.html (e a pasta imagens) PARA DENTRO da pasta do seu
+repositorio, substituindo os arquivos antigos. Depois, no terminal,
+dentro da pasta do repositorio:
+  git status
+  git add .
+  git commit -m "Atualiza portfolio"
+  git push
+Se o git status disser "nothing to commit", o arquivo copiado ainda e
+igual ao que ja foi enviado antes (ou foi copiado para outra pasta).
